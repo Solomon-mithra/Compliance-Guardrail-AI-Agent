@@ -1,4 +1,4 @@
-# Compliance Guardrail
+# Compliance Guardrail for AI Agents Replies
 
 A deterministic, auditable compliance guardrail for Voice/LLM agents. This system moderates agent replies based on configurable rules (blocking phrases, required disclosures, PII redaction, and length limits) before they are sent to customers.
 
