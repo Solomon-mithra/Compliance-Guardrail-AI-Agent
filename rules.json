@@ -1,0 +1,28 @@
+[
+    {
+        "id": "rule_block",
+        "type": "BLOCK_PHRASE",
+        "params": {"phrases": ["guarantee", "100% approved"]}
+    },
+    {
+        "id": "rule_req",
+        "type": "REQUIRE_PHRASE",
+        "params": {
+            "phrase": "This call may be recorded.",
+            "when": {"field": "consent_to_recording", "equals": true}
+        }
+    },
+    {
+        "id": "rule_rewrite",
+        "type": "REWRITE_REGEX",
+        "params": {
+            "pattern": "\\b\\d{3}-\\d{3}-\\d{4}\\b",
+            "replacement": "[REDACTED_PHONE]"
+        }
+    },
+    {
+        "id": "rule_max",
+        "type": "MAX_LENGTH",
+        "params": {"max_chars": 80}
+    }
+]

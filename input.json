@@ -1,0 +1,8 @@
+{
+    "user_state": {
+        "consent_to_recording": true,
+        "jurisdiction": "CA",
+        "is_debt_collection": true
+    },
+    "draft_reply": "Hello. Please call me at 555-123-4567 regarding your account status. We have important information to discuss about your recent application and we would like to go over the details with you as soon as possible."
+}
