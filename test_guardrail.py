@@ -7,11 +7,19 @@ class TestGuardrail(unittest.TestCase):
     def setUp(self):
         with open("rules.json", "r") as f:
             self.rules = json.load(f)
+        
+        # Valid default state for tests
+        self.default_state = {
+            "consent_to_recording": False,
+            "jurisdiction": "NY",
+            "is_debt_collection": False
+        }
 
     
     def test_block_phrase(self):
         """Test Case 1: BLOCK_PHRASE logic"""
-        user_state = {}
+        # User state must be complete
+        user_state = self.default_state.copy()
         draft_reply = "Hi, we guarantee you'll be approved."
         rules = [
             {
@@ -30,7 +38,9 @@ class TestGuardrail(unittest.TestCase):
 
     def test_require_phrase(self):
         """Test Case 2: REQUIRE_PHRASE logic (and no double-prepend)"""
-        user_state = {"consent_to_recording": True}
+        user_state = self.default_state.copy()
+        user_state["consent_to_recording"] = True
+        
         draft_reply = "Hello there."
         rules = [
             {
@@ -60,7 +70,7 @@ class TestGuardrail(unittest.TestCase):
 
     def test_rewrite_regex(self):
         """Test Case 3: REWRITE_REGEX redaction"""
-        user_state = {}
+        user_state = self.default_state.copy()
         draft_reply = "Call me at 555-123-4567 or 444-555-6666."
         rules = [
             {
@@ -80,7 +90,7 @@ class TestGuardrail(unittest.TestCase):
 
     def test_max_length(self):
         """Test Case 4: MAX_LENGTH truncation logic"""
-        user_state = {}
+        user_state = self.default_state.copy()
         draft_reply = "Short message."
         rules = [
             {

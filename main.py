@@ -1,5 +1,6 @@
 import json
 import sys
+from pydantic import ValidationError
 from guardrail import moderate_reply
 
 def main():
@@ -25,13 +26,15 @@ def main():
 
     user_state = data.get("user_state")
     draft_reply = data.get("draft_reply")
-    # Use loaded rules, ignore rules in input if any (or we could merge, but prompt implies external source is authority)
-
-
+    
     # Run the function
-    result = moderate_reply(user_state, draft_reply, rules)
-
-    print(json.dumps(result, indent=2))
+    try:
+        result = moderate_reply(user_state, draft_reply, rules)
+        print(json.dumps(result, indent=2))
+    except ValidationError as e:
+        print("Validation Error:", file=sys.stderr)
+        print(e.json(indent=2), file=sys.stderr)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

@@ -1,32 +1,33 @@
 import re
 
+from models import GuardrailRequest
+
 def moderate_reply(user_state, draft_reply, rules):
     """
     Moderates a draft reply based on a list of deterministic rules.
-    
-    Args:
-        user_state (dict): Context about the user (jurisdiction, consent, etc.)
-        draft_reply (str): The proposed reply from the agent.
-        rules (list): List of rule dictionaries.
-        
-    Returns:
-        dict: {
-            "status": "ALLOW" | "BLOCK" | "REWRITE",
-            "final_reply": str,
-            "applied_rules": list[str],
-            "reason": str (optional)
-        }
     """
-    current_reply = draft_reply
+    # Validate Inputs using Pydantic
+    # This throws ValidationError if inputs are invalid
+    request = GuardrailRequest(
+        user_state=user_state,
+        draft_reply=draft_reply,
+        rules=rules or []
+    )
+    
+    # Use validated data
+    current_reply = request.draft_reply
+    user_state_obj = request.user_state # Pydantic model
+    rules_objs = request.rules # List of Rule models
+    
     applied_rule_ids = []
     is_rewritten = False
     status = "ALLOW"
     reason = None
 
-    for rule in rules:
-        rule_type = rule.get("type")
-        rule_id = rule.get("id")
-        params = rule.get("params", {})
+    for rule in rules_objs:
+        rule_type = rule.type
+        rule_id = rule.id
+        params = rule.params
         
         # Always track that we are processing this rule
         applied_rule_ids.append(rule_id)
@@ -51,7 +52,9 @@ def moderate_reply(user_state, draft_reply, rules):
             if condition:
                 field = condition.get("field")
                 expected_value = condition.get("equals")
-                if user_state.get(field) != expected_value:
+                # Access user_state fields via Pydantic model (dot attribute) or getattr 
+                # user_state_obj is a Pydantic model now
+                if getattr(user_state_obj, field, None) != expected_value:
                     condition_met = False
             
             if condition_met and phrase:
