@@ -58,7 +58,7 @@ class TestGuardrail(unittest.TestCase):
         self.assertEqual(result["status"], "REWRITE")
         self.assertEqual(result["final_reply"], "This call may be recorded. Hello there.")
         self.assertEqual(result["applied_rules"], ["req_recording"])
-        self.assertIsNone(result["reason"])
+        self.assertEqual(result["reason"], "")
         
         # Sub-case B: Phrase present -> No change
         draft_reply_existing = "This call may be recorded. Hello there."
@@ -66,7 +66,7 @@ class TestGuardrail(unittest.TestCase):
         self.assertEqual(result_existing["status"], "ALLOW")
         self.assertEqual(result_existing["final_reply"], "This call may be recorded. Hello there.")
         self.assertEqual(result_existing["applied_rules"], ["req_recording"]) # Still tracked
-        self.assertIsNone(result_existing["reason"])
+        self.assertEqual(result_existing["reason"], "")
 
     def test_rewrite_regex(self):
         """Test Case 3: REWRITE_REGEX redaction"""
